@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          spring data solr - undefined
+          线程池理解 - undefined
         
     </title>
 
-    <link rel="canonical" href="http://yoursite-url/2018/08/06/spring-data-solr/">
+    <link rel="canonical" href="http://yoursite-url/2018/08/13/线程池理解/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -90,14 +90,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#spring data solr" title="spring data solr">spring data solr</a>
+                              <a class="tag" href="/tags/#ThreadPool" title="ThreadPool">ThreadPool</a>
                             
                         </div>
-                        <h1>spring data solr</h1>
+                        <h1>线程池理解</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by NPZ on
-                            2018-08-06
+                            2018-08-13
                         </span>
                     </div>
                 
@@ -214,159 +214,187 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="spring-data-solr-翻译"><a href="#spring-data-solr-翻译" class="headerlink" title="spring data solr(翻译)"></a>spring data solr(翻译)</h1><blockquote>
-<p>spring data solr 3.0.9 文档部分翻译</p>
-</blockquote>
-<h2 id="Preface-前言"><a href="#Preface-前言" class="headerlink" title="Preface 前言"></a>Preface 前言</h2><p>The Spring Data for Apache Solr project applies core Spring concepts to the development of solutions using the Apache Solr Search Engine. We provide a “template” as a high-level abstraction for storing and querying documents. You will notice similarities to the mongodb support in the Spring Framework.</p>
-<pre><code>Apache Solr项目的Spring Data将核心Spring概念应用于使用Apache Solr搜索引擎开发解决方案。
-我们提供了一个“模板”作为存储和查询文档的高级抽象。您会注意到Spring Framework中mongodb支持
-的相似之处。
-</code></pre><p><strong>Requirements  要求</strong></p>
-<p>Requires Java 8 runtime and Apache Solr 6.6. Preferably the latest 6.6.x version.</p>
-<pre><code>需要java8的运行环境和apache solr 6.6 最好是最新的6.6.x的版本
-
-&lt;dependency&gt;
-  &lt;groupId&gt;org.apache.solr&lt;/groupId&gt;
-  &lt;artifactId&gt;solr-solrj&lt;/artifactId&gt;
-  &lt;version&gt;${solr.version}&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre><h2 id="Reference-Documentation-参考文档"><a href="#Reference-Documentation-参考文档" class="headerlink" title="Reference Documentation 参考文档"></a>Reference Documentation 参考文档</h2><h3 id="Solr-Repositories-Introduction-solr存储库介绍"><a href="#Solr-Repositories-Introduction-solr存储库介绍" class="headerlink" title="Solr Repositories Introduction solr存储库介绍"></a>Solr Repositories Introduction solr存储库介绍</h3><p> <strong>Spring Namespace</strong></p>
-<p>The Spring Data Solr module contains a custom namespace allowing definition of repository beans as well as elements for instantiating a SolrClient .</p>
-<p>Using the repositories element looks up Spring Data repositories as described in Creating Repository Instances .</p>
-<pre><code>Spring Data Solr模块包含一个自定义命名空间，允许定义存储库bean以及实例化SolrClient的元素。
-使用repositories元素查找Spring Data存储库，如创建存储库实例中所述。
-</code></pre><p>Example：Setting up Solr repositories using Namespace 使用命名空间设置Solr存储库</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-  xmlns:solr=&quot;http://www.springframework.org/schema/data/solr&quot;
-  xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/data/solr
-    http://www.springframework.org/schema/data/solr/spring-solr.xsd&quot;&gt;
-
-  &lt;solr:repositories base-package=&quot;com.acme.repositories&quot; /&gt;
-&lt;/beans&gt;
-</code></pre><p>Using the solr-server or embedded-solr-server element registers an instance of SolrClient in the context.</p>
-<pre><code>使用solr-server或embedded-solr-server元素在上下文中注册SolrClient的实例
-</code></pre><p>Example：HttpSolrClient using Namespace</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-  xmlns:solr=&quot;http://www.springframework.org/schema/data/solr&quot;
-  xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/data/solr
-    http://www.springframework.org/schema/data/solr/spring-solr.xsd&quot;&gt;
-
-  &lt;solr:solr-client id=&quot;solrClient&quot; url=&quot;http://locahost:8983/solr&quot; /&gt;
-&lt;/beans&gt;
-</code></pre><p>Example.：LBSolrClient using Namespace</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-  xmlns:solr=&quot;http://www.springframework.org/schema/data/solr&quot;
-  xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/data/solr
-    http://www.springframework.org/schema/data/solr/spring-solr.xsd&quot;&gt;
-
-  &lt;solr:solr-client id=&quot;solrClient&quot; url=&quot;http://locahost:8983/solr,http://localhost:8984/solr&quot; /&gt;
-&lt;/beans&gt;
-</code></pre><p> <strong>Annotation based configuration</strong></p>
-<p>The Spring Data Solr repositories support cannot only be activated through an XML namespace but also using an annotation through JavaConfig.</p>
-<pre><code>spring data solr 存储 不仅支持xml配置，还支持用java注释来实现
-
-@Configuration
-@EnableSolrRepositories
-class ApplicationConfig {
-
-  @Bean
-  public SolrClient solrClient() {
-    EmbeddedSolrServerFactory factory = new EmbeddedSolrServerFactory(&quot;classpath:com/acme/solr&quot;);
-    return factory.getSolrServer();
-  }
-
-  @Bean
-  public SolrOperations solrTemplate() {
-    return new SolrTemplate(solrClient());
-  }
+                <h1 id="线程池的理解"><a href="#线程池的理解" class="headerlink" title="线程池的理解"></a>线程池的理解</h1><p>Java线程池是管理线程，避免创建大量的线程增加开销，实现了一个Java高并发的、Java多线程的、可管理的统一调度器。java.util.concurrent.Executors工作中最常用的和熟知的，java.util.concurrent包由出自著名的大神Doug Lea之手。</p>
+<p>通过jvm了解到，一个对象的创建大概需要经过以下几步：</p>
+<ol>
+<li><p>检查对应的类是否已经被加载、解析和初始化</p>
+</li>
+<li><p>类加载后，为新生对象分配内存</p>
+</li>
+<li><p>将分配到的内存空间初始为 0</p>
+</li>
+<li><p>对对象进行关键信息的设置，比如对象的哈希码等</p>
+</li>
+<li><p>然后执行 init 方法初始化对象</p>
+</li>
+</ol>
+<h2 id="线程池的创建"><a href="#线程池的创建" class="headerlink" title="线程池的创建"></a>线程池的创建</h2><p>创建线程池需要使用 ThreadPoolExecutor 类，它的构造函数参数如下：</p>
+<pre><code>public ThreadPoolExecutor(int corePoolSize,
+                          int maximumPoolSize,
+                          long keepAliveTime,
+                          TimeUnit unit,
+                          BlockingQueue&lt;Runnable&gt; workQueue,
+                          RejectedExecutionHandler handler) {
+    this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+         Executors.defaultThreadFactory(), handler);
 }
-</code></pre><p>The configuration above sets up an EmbeddedSolrServer which is used by the SolrTemplate . Spring Data Solr Repositories are activated using the @EnableSolrRepositories annotation, which essentially carries the same attributes as the XML namespace does. If no base package is configured, it will use the one the configuration class resides in.</p>
-<pre><code>上面的配置的EmbeddedSolrServer是用来激活solrTemplate,spring Data Solr存储库使用
-@EnableSolrRepositories注释激活,如果未配置基本软件包，则将使用配置类所在的基础软件包。
-</code></pre><p><strong>Solr Repositores using CDI</strong></p>
-<p>The Spring Data Solr repositories can also be set up using CDI functionality.</p>
-<pre><code>Spring Data Solr存储库也可以使用CDI功能进行设置。
-</code></pre><p>Example 53. Spring Data Solr repositories using JavaConfig java配置存储库</p>
-<pre><code>class SolrTemplateProducer {
+</code></pre><p>corePoolSize：线程池核心线程数量</p>
+<p>maximumPoolSize:线程池最大线程数量</p>
+<p>keepAliverTime：当活跃线程数大于核心线程数时，空闲的多余线程最大存活时间</p>
+<p>unit：存活时间的单位</p>
+<p>workQueue：一个阻塞队列，用来存储等待执行的任务（<strong>可选ArrayBlockingQueue、LinkedBlockingQueue、SynchronousQueue</strong>）</p>
+<p>handler：超出线程范围和队列容量的任务的处理程序，拒绝任务的策略，四种。<br><strong>ThreadPoolExecutor.AbortPolicy:丢弃任务并抛出RejectedExecutionException异常。</strong><br><strong>ThreadPoolExecutor.DiscardPolicy：也是丢弃任务，但是不抛出异常。</strong><br><strong>ThreadPoolExecutor.DiscardOldestPolicy：丢弃队列最前面的任务，然后重新尝试执行任务</strong><br><strong>ThreadPoolExecutor.CallerRunsPolicy：由调用线程处理该任务</strong></p>
+<h2 id="线程池内部状态"><a href="#线程池内部状态" class="headerlink" title="线程池内部状态"></a>线程池内部状态</h2><pre><code>private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
+private static final int COUNT_BITS = Integer.SIZE - 3;
+private static final int CAPACITY   = (1 &lt;&lt; COUNT_BITS) - 1;
 
-  @Produces
-  @ApplicationScoped
-  public SolrOperations createSolrTemplate() {
-    return new SolrTemplate(new EmbeddedSolrServerFactory(&quot;classpath:com/acme/solr&quot;));
-  }
+// runState is stored in the high-order bits
+private static final int RUNNING    = -1 &lt;&lt; COUNT_BITS;
+private static final int SHUTDOWN   =  0 &lt;&lt; COUNT_BITS;
+private static final int STOP       =  1 &lt;&lt; COUNT_BITS;
+private static final int TIDYING    =  2 &lt;&lt; COUNT_BITS;
+private static final int TERMINATED =  3 &lt;&lt; COUNT_BITS;
+
+// Packing and unpacking ctl
+private static int runStateOf(int c)     { return c &amp; ~CAPACITY; }
+private static int workerCountOf(int c)  { return c &amp; CAPACITY; }
+private static int ctlOf(int rs, int wc) { return rs | wc; }
+</code></pre><p>其中AtomicInteger变量ctl的功能非常强大：利用低29位表示线程池中线程数，通过高3位表示线程池的运行状态：</p>
+<p>1、RUNNING：-1 &lt;&lt; COUNT_BITS，即高3位为111，该状态的线程池会接收新任务，并处理阻塞队列中的任务； </p>
+<p>2、SHUTDOWN： 0 &lt;&lt; COUNT_BITS，即高3位为000，该状态的线程池不会接收新任务，但会处理阻塞队列中的任务；</p>
+<p>3、STOP ： 1 &lt;&lt; COUNT_BITS，即高3位为001，该状态的线程不会接收新任务，也不会处理阻塞队列中的任务，而且会中断正在运行的任务； </p>
+<p>4、TIDYING ： 2 &lt;&lt; COUNT_BITS，即高3位为010, 所有的任务都已经终止； </p>
+<p>5、TERMINATED： 3 &lt;&lt; COUNT_BITS，即高3位为011, terminated()方法已经执行完成 </p>
+<h2 id="线程池任务执行方法"><a href="#线程池任务执行方法" class="headerlink" title="线程池任务执行方法"></a>线程池任务执行方法</h2><h3 id="execute-方法"><a href="#execute-方法" class="headerlink" title="execute()方法"></a>execute()方法</h3><p>ThreadPoolExecutor.execute(),此方法实际上是Executor中声明的方法，在ThreadPoolExecutor进行了具体的实现，这个方法是ThreadPoolExecutor的核心方法，通过这个方法可以向线程池提交一个任务，交由线程池去执行。</p>
+<pre><code>public void execute(Runnable command) {
+        if (command == null)
+            throw new NullPointerException();
+        /*
+         * Proceed in 3 steps:
+         *
+         * 1. If fewer than corePoolSize threads are running, try to
+         * start a new thread with the given command as its first
+         * task.  The call to addWorker atomically checks runState and
+         * workerCount, and so prevents false alarms that would add
+         * threads when it shouldn&apos;t, by returning false.
+         *
+         * 2. If a task can be successfully queued, then we still need
+         * to double-check whether we should have added a thread
+         * (because existing ones died since last checking) or that
+         * the pool shut down since entry into this method. So we
+         * recheck state and if necessary roll back the enqueuing if
+         * stopped, or start a new thread if there are none.
+         *
+         * 3. If we cannot queue task, then we try to add a new
+         * thread.  If it fails, we know we are shut down or saturated
+         * and so reject the task.
+         */
+        int c = ctl.get();
+        //小于核心线程数，创建新线程执行任务
+        if (workerCountOf(c) &lt; corePoolSize) {  
+            if (addWorker(command, true))
+                return;
+            c = ctl.get();
+        }
+        //线程池处于RUNNING状态，把提交的任务成功放入阻塞队列中
+        if (isRunning(c) &amp;&amp; workQueue.offer(command)) { 
+            int recheck = ctl.get();
+        //如果线程池没有RUNNING，成功从阻塞队列中删除任务，执行reject方法处理任务
+            if (! isRunning(recheck) &amp;&amp; remove(command))
+                reject(command);
+        //线程池处于running状态，但是没有线程，则创建线程
+            else if (workerCountOf(recheck) == 0)
+                addWorker(null, false);
+        }
+        // 往线程池中创建新的线程失败，则reject任务
+        else if (!addWorker(command, false))
+            reject(command);
+    }
+</code></pre><h3 id="addWorker-方法"><a href="#addWorker-方法" class="headerlink" title="addWorker()方法"></a>addWorker()方法</h3><pre><code>private boolean addWorker(Runnable firstTask, boolean core) {
+    retry:
+    for (;;) {
+        int c = ctl.get();
+        int rs = runStateOf(c);
+
+        // Check if queue empty only if necessary.
+        //1.STOP，TIDYING和TERMINATED这三种状态都会直接返回false。
+        //2.如果是SHUTDOWN，而且firstTask不是null，也返回false。
+        //3.如果是SHUTDOWN，firstTask是null，而且任务队列是空，返回false。
+        if (rs &gt;= SHUTDOWN &amp;&amp;
+            ! (rs == SHUTDOWN &amp;&amp;
+               firstTask == null &amp;&amp;
+               ! workQueue.isEmpty()))
+            return false;
+
+        for (;;) {
+            // 获取线程数
+            int wc = workerCountOf(c);
+             // 如果wc超过CAPACITY，也就是ctl的低29位的最大值（二进制是29个1），返回false；
+            // 这里的core是addWorker方法的第二个参数，如果为true表示根据corePoolSize来比较， 
+            // 如果为false则根据maximumPoolSize来比较
+            if (wc &gt;= CAPACITY ||
+                wc &gt;= (core ? corePoolSize : maximumPoolSize))
+                return false;
+            // 尝试增加workerCount，如果成功，则跳出第一个for循环
+            if (compareAndIncrementWorkerCount(c)) //CAS比较
+                break retry;
+            c = ctl.get();  // Re-read ctl
+            if (runStateOf(c) != rs)
+                continue retry;
+            // else CAS failed due to workerCount change; retry inner loop
+        }
+    }
+
+    boolean workerStarted = false;
+    boolean workerAdded = false;
+    Worker w = null;
+    try {
+        //根据firstTask来创建Worker对象
+        w = new Worker(firstTask);
+        //每一个Worker对象都会创建一个线程
+        final Thread t = w.thread;
+        if (t != null) {
+            //重入锁
+            final ReentrantLock mainLock = this.mainLock;
+            mainLock.lock();
+            try {
+                // Recheck while holding lock.
+                // Back out on ThreadFactory failure or if
+                // shut down before lock acquired.
+                int rs = runStateOf(ctl.get());
+
+                if (rs &lt; SHUTDOWN ||
+                    (rs == SHUTDOWN &amp;&amp; firstTask == null)) {
+                    if (t.isAlive()) // precheck that t is startable
+                        throw new IllegalThreadStateException();
+                    workers.add(w);
+                    int s = workers.size();
+                    if (s &gt; largestPoolSize)
+                        largestPoolSize = s;
+                    workerAdded = true;
+                }
+            } finally {
+                mainLock.unlock();
+            }
+            if (workerAdded) {
+                t.start();
+                workerStarted = true;
+            }
+        }
+    } finally {
+        if (! workerStarted)
+            addWorkerFailed(w);
+    }
+    return workerStarted;
 }
-
-class ProductService {
-
-  private ProductRepository repository;
-
-  public Page&lt;Product&gt; findAvailableProductsByName(String name, Pageable pageable) {
-    return repository.findByAvailableTrueAndNameStartingWith(name, pageable);
-  }
-
-  @Inject
-  public void setRepository(ProductRepository repository) {
-    this.repository = repository;
-  }
-}
-</code></pre><p><strong>Transaction Support</strong></p>
-<p>Solr supports transactions on server level means create, updaet, delete actions since the last commit/optimize/rollback are queued on the server and committed/optimized/rolled back at once. Spring Data Solr Repositories will participate in Spring Managed Transactions and commit/rollback changes on complete.</p>
-<pre><code>Solr支持服务器级别的事务意味着创建，更新，删除操作，因为上次提交/优化/回滚在服务器上排
-队并一次提交/优化/回滚。 Spring Data Solr存储库将参与Spring管理的事务，并在完成时提
-交/回滚更改。
-
-@Transactional
-public Product save(Product product) {
-  Product savedProduct = jpaRepository.save(product);
-  solrRepository.save(savedProduct);
-  return savedProduct;
-}
-</code></pre><h3 id="Query-methods-查询方法"><a href="#Query-methods-查询方法" class="headerlink" title="Query methods 查询方法"></a>Query methods 查询方法</h3><p><strong>Query lookup strategies  查找策略</strong></p>
-<p>The Solr module supports defining a query manually as String or have it being derived from the method name. NOTE: There is no QueryDSL Support present at this time.</p>
-<pre><code>Solr模块支持手动将查询定义为String，或者从方法名称派生查询。注意：目前没有QueryDSL支持。
-</code></pre><p>1.Declared queries  声明的查询</p>
-<p>Deriving the query from the method name is not always sufficient and/or may result in unreadable method names. In this case one might make either use of Solr named queries (see Using NamedQueries ) or use the @Query annotation (see Using @Query Annotation ).</p>
-<pre><code>从方法名称派生查询并不总是足够可行，可能导致不可读的方法名称。在这种情况下，可以使用Solr命名
-查询（请参阅使用NamedQueries）或使用@Query注释（请参阅使用@Query Annotation）。
-</code></pre><p>2 Query creation 创建查询</p>
-<p>Generally the query creation mechanism for Solr works as described in Query methods（链接） . Here’s a short example of what a Solr query method translates into:</p>
-<pre><code>通常，Solr的查询创建机制的工作方式如Query方法中所述。以下是Solr查询方法转换为的简短示例：
-</code></pre><p>Example 54. Query creation from method names 方法名查询</p>
-<pre><code>public interface ProductRepository extends Repository&lt;Product, String&gt; {
-  List&lt;Product&gt; findByNameAndPopularity(String name, Integer popularity);
-}
-</code></pre><p>The method name above will be translated into the following solr query</p>
-<pre><code>方法名将会被翻译为下面的查询语句
-
-q=name:?0 AND popularity:?1
-</code></pre><p>有很多查询方法可以自己查询 <a href="https://docs.spring.io/spring-data/solr/docs/3.0.9.RELEASE/reference/html/#solr.repositories" target="_blank" rel="noopener">spring data solr DOC</a></p>
-<p><strong>Using @Query Annotation  Query注解查询</strong></p>
-<p>Using named queries ( Using NamedQueries ) to declare queries for entities is a valid approach and works fine for a small number of queries. As the queries themselves are tied to the Java method that executes them, you actually can bind them directly using the Spring Data Solr @Query annotation.</p>
-<pre><code>使用命名查询(使用NamedQueries)来声明实体的查询是一种有效的方法，在少量查询中可以很好地
-工作。由于查询本身绑定到执行查询的Java方法，实际上可以使用Spring Data Solr @Query注释直接
-绑定查询。
-</code></pre><p>Example 55. Declare query at the method using the @Query annotation.</p>
-<pre><code>public interface ProductRepository extends SolrRepository&lt;Product, String&gt; {
-  @Query(&quot;inStock:?0&quot;)
-  List&lt;Product&gt; findByAvailable(Boolean available);
-}
-</code></pre><h3 id="Document-Mapping-文档映射"><a href="#Document-Mapping-文档映射" class="headerlink" title="Document Mapping  文档映射"></a>Document Mapping  文档映射</h3><p>Though there is already support for Entity Mapping within SolrJ, Spring Data Solr ships with its own mapping mechanism shown in the following section. NOTE: DocumentObjectBinder has superior performance. Therefore usage is recommended if there is not need for custom type mapping. You can switch to DocumentObjectBinder by registering SolrJConverter within SolrTemplate.</p>
-<pre><code>虽然SolrJ中已经支持实体映射，但是Spring Data Solr附带了它自己的映射机制，如下一节所示。
-注:DocumentObjectBinder有较好的性能。因此，如果不需要自定义类型映射，建议使用。通过在
-SolrTemplate中注册SolrJConverter，您可以切换到DocumentObjectBinder。
-</code></pre><p>今天先翻译到这里了，如果需要再继续翻译！！！</p>
+</code></pre><p>线程池中的每一个线程被封装成一个Worker对象，ThreadPool维护的其实就是一组Worker对象</p>
+<p>其他方法</p>
+<pre><code>submit()
+shutdown()
+shutdownNow()
+</code></pre><p>submit()方法是在ExecutorService中声明的方法，在AbstractExecutorService就已经有了具体的实现，在ThreadPoolExecutor中并没有对其进行重写，这个方法也是用来向线程池提交任务的，但是它和execute()方法不同，它能够返回任务执行的结果，去看submit()方法的实现，会发现它实际上还是调用的execute()方法，只不过它利用了Future来获取任务执行结果（Future相关内容将在下一篇讲述）。</p>
+<p>shutdown()和shutdownNow()是用来关闭线程池的。</p>
+<p><strong>未完待续……</strong></p>
 
                 
 
@@ -374,13 +402,9 @@ SolrTemplate中注册SolrJConverter，您可以切换到DocumentObjectBinder。
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/2018/08/13/线程池理解/" data-toggle="tooltip" data-placement="top" title="线程池理解">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/2018/07/24/上一个电商项目的思考/" data-toggle="tooltip" data-placement="top" title="上一个电商项目的思考">Next Post &rarr;</a>
+                            <a href="/2018/08/06/spring-data-solr/" data-toggle="tooltip" data-placement="top" title="spring data solr">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -410,7 +434,7 @@ SolrTemplate中注册SolrJConverter，您可以切换到DocumentObjectBinder。
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#spring-data-solr-翻译"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">spring data solr(翻译)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Preface-前言"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Preface 前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Reference-Documentation-参考文档"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">Reference Documentation 参考文档</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Solr-Repositories-Introduction-solr存储库介绍"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">Solr Repositories Introduction solr存储库介绍</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Query-methods-查询方法"><span class="toc-nav-number">1.2.2.</span> <span class="toc-nav-text">Query methods 查询方法</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Document-Mapping-文档映射"><span class="toc-nav-number">1.2.3.</span> <span class="toc-nav-text">Document Mapping  文档映射</span></a></li></ol></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#线程池的理解"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">线程池的理解</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#线程池的创建"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">线程池的创建</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#线程池内部状态"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">线程池内部状态</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#线程池任务执行方法"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">线程池任务执行方法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#execute-方法"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">execute()方法</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#addWorker-方法"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">addWorker()方法</span></a></li></ol></li></ol></li></ol>
         
         </div>
       </aside>
@@ -430,7 +454,7 @@ SolrTemplate中注册SolrJConverter，您可以切换到DocumentObjectBinder。
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#spring data solr" title="spring data solr">spring data solr</a>
+                          <a class="tag" href="/tags/#ThreadPool" title="ThreadPool">ThreadPool</a>
                         
                     </div>
                 </section>
@@ -461,8 +485,8 @@ SolrTemplate中注册SolrJConverter，您可以切换到DocumentObjectBinder。
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "your-disqus-ID";
-    var disqus_identifier = "http://yoursite-url/2018/08/06/spring-data-solr/";
-    var disqus_url = "http://yoursite-url/2018/08/06/spring-data-solr/";
+    var disqus_identifier = "http://yoursite-url/2018/08/13/线程池理解/";
+    var disqus_url = "http://yoursite-url/2018/08/13/线程池理解/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
