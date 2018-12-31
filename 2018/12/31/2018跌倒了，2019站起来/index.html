@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          spring data solr - undefined
+          2018跌倒了，2019站起来 - undefined
         
     </title>
 
-    <link rel="canonical" href="http://yoursite-url/2018/08/06/spring-data-solr/">
+    <link rel="canonical" href="http://yoursite-url/2018/12/31/2018跌倒了，2019站起来/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -90,14 +90,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#spring data solr" title="spring data solr">spring data solr</a>
+                              <a class="tag" href="/tags/#2018" title="2018">2018</a>
                             
                         </div>
-                        <h1>spring data solr</h1>
+                        <h1>2018跌倒了，2019站起来</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by NPZ on
-                            2018-08-06
+                            2018-12-31
                         </span>
                     </div>
                 
@@ -214,159 +214,26 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="spring-data-solr-翻译"><a href="#spring-data-solr-翻译" class="headerlink" title="spring data solr(翻译)"></a>spring data solr(翻译)</h1><blockquote>
-<p>spring data solr 3.0.9 文档部分翻译</p>
-</blockquote>
-<h2 id="Preface-前言"><a href="#Preface-前言" class="headerlink" title="Preface 前言"></a>Preface 前言</h2><p>The Spring Data for Apache Solr project applies core Spring concepts to the development of solutions using the Apache Solr Search Engine. We provide a “template” as a high-level abstraction for storing and querying documents. You will notice similarities to the mongodb support in the Spring Framework.</p>
-<pre><code>Apache Solr项目的Spring Data将核心Spring概念应用于使用Apache Solr搜索引擎开发解决方案。
-我们提供了一个“模板”作为存储和查询文档的高级抽象。您会注意到Spring Framework中mongodb支持
-的相似之处。
-</code></pre><p><strong>Requirements  要求</strong></p>
-<p>Requires Java 8 runtime and Apache Solr 6.6. Preferably the latest 6.6.x version.</p>
-<pre><code>需要java8的运行环境和apache solr 6.6 最好是最新的6.6.x的版本
-
-&lt;dependency&gt;
-  &lt;groupId&gt;org.apache.solr&lt;/groupId&gt;
-  &lt;artifactId&gt;solr-solrj&lt;/artifactId&gt;
-  &lt;version&gt;${solr.version}&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre><h2 id="Reference-Documentation-参考文档"><a href="#Reference-Documentation-参考文档" class="headerlink" title="Reference Documentation 参考文档"></a>Reference Documentation 参考文档</h2><h3 id="Solr-Repositories-Introduction-solr存储库介绍"><a href="#Solr-Repositories-Introduction-solr存储库介绍" class="headerlink" title="Solr Repositories Introduction solr存储库介绍"></a>Solr Repositories Introduction solr存储库介绍</h3><p> <strong>Spring Namespace</strong></p>
-<p>The Spring Data Solr module contains a custom namespace allowing definition of repository beans as well as elements for instantiating a SolrClient .</p>
-<p>Using the repositories element looks up Spring Data repositories as described in Creating Repository Instances .</p>
-<pre><code>Spring Data Solr模块包含一个自定义命名空间，允许定义存储库bean以及实例化SolrClient的元素。
-使用repositories元素查找Spring Data存储库，如创建存储库实例中所述。
-</code></pre><p>Example：Setting up Solr repositories using Namespace 使用命名空间设置Solr存储库</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-  xmlns:solr=&quot;http://www.springframework.org/schema/data/solr&quot;
-  xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/data/solr
-    http://www.springframework.org/schema/data/solr/spring-solr.xsd&quot;&gt;
-
-  &lt;solr:repositories base-package=&quot;com.acme.repositories&quot; /&gt;
-&lt;/beans&gt;
-</code></pre><p>Using the solr-server or embedded-solr-server element registers an instance of SolrClient in the context.</p>
-<pre><code>使用solr-server或embedded-solr-server元素在上下文中注册SolrClient的实例
-</code></pre><p>Example：HttpSolrClient using Namespace</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-  xmlns:solr=&quot;http://www.springframework.org/schema/data/solr&quot;
-  xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/data/solr
-    http://www.springframework.org/schema/data/solr/spring-solr.xsd&quot;&gt;
-
-  &lt;solr:solr-client id=&quot;solrClient&quot; url=&quot;http://locahost:8983/solr&quot; /&gt;
-&lt;/beans&gt;
-</code></pre><p>Example.：LBSolrClient using Namespace</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-  xmlns:solr=&quot;http://www.springframework.org/schema/data/solr&quot;
-  xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/data/solr
-    http://www.springframework.org/schema/data/solr/spring-solr.xsd&quot;&gt;
-
-  &lt;solr:solr-client id=&quot;solrClient&quot; url=&quot;http://locahost:8983/solr,http://localhost:8984/solr&quot; /&gt;
-&lt;/beans&gt;
-</code></pre><p> <strong>Annotation based configuration</strong></p>
-<p>The Spring Data Solr repositories support cannot only be activated through an XML namespace but also using an annotation through JavaConfig.</p>
-<pre><code>spring data solr 存储 不仅支持xml配置，还支持用java注释来实现
-
-@Configuration
-@EnableSolrRepositories
-class ApplicationConfig {
-
-  @Bean
-  public SolrClient solrClient() {
-    EmbeddedSolrServerFactory factory = new EmbeddedSolrServerFactory(&quot;classpath:com/acme/solr&quot;);
-    return factory.getSolrServer();
-  }
-
-  @Bean
-  public SolrOperations solrTemplate() {
-    return new SolrTemplate(solrClient());
-  }
-}
-</code></pre><p>The configuration above sets up an EmbeddedSolrServer which is used by the SolrTemplate . Spring Data Solr Repositories are activated using the @EnableSolrRepositories annotation, which essentially carries the same attributes as the XML namespace does. If no base package is configured, it will use the one the configuration class resides in.</p>
-<pre><code>上面的配置的EmbeddedSolrServer是用来激活solrTemplate,spring Data Solr存储库使用
-@EnableSolrRepositories注释激活,如果未配置基本软件包，则将使用配置类所在的基础软件包。
-</code></pre><p><strong>Solr Repositores using CDI</strong></p>
-<p>The Spring Data Solr repositories can also be set up using CDI functionality.</p>
-<pre><code>Spring Data Solr存储库也可以使用CDI功能进行设置。
-</code></pre><p>Example 53. Spring Data Solr repositories using JavaConfig java配置存储库</p>
-<pre><code>class SolrTemplateProducer {
-
-  @Produces
-  @ApplicationScoped
-  public SolrOperations createSolrTemplate() {
-    return new SolrTemplate(new EmbeddedSolrServerFactory(&quot;classpath:com/acme/solr&quot;));
-  }
-}
-
-class ProductService {
-
-  private ProductRepository repository;
-
-  public Page&lt;Product&gt; findAvailableProductsByName(String name, Pageable pageable) {
-    return repository.findByAvailableTrueAndNameStartingWith(name, pageable);
-  }
-
-  @Inject
-  public void setRepository(ProductRepository repository) {
-    this.repository = repository;
-  }
-}
-</code></pre><p><strong>Transaction Support</strong></p>
-<p>Solr supports transactions on server level means create, updaet, delete actions since the last commit/optimize/rollback are queued on the server and committed/optimized/rolled back at once. Spring Data Solr Repositories will participate in Spring Managed Transactions and commit/rollback changes on complete.</p>
-<pre><code>Solr支持服务器级别的事务意味着创建，更新，删除操作，因为上次提交/优化/回滚在服务器上排
-队并一次提交/优化/回滚。 Spring Data Solr存储库将参与Spring管理的事务，并在完成时提
-交/回滚更改。
-
-@Transactional
-public Product save(Product product) {
-  Product savedProduct = jpaRepository.save(product);
-  solrRepository.save(savedProduct);
-  return savedProduct;
-}
-</code></pre><h3 id="Query-methods-查询方法"><a href="#Query-methods-查询方法" class="headerlink" title="Query methods 查询方法"></a>Query methods 查询方法</h3><p><strong>Query lookup strategies  查找策略</strong></p>
-<p>The Solr module supports defining a query manually as String or have it being derived from the method name. NOTE: There is no QueryDSL Support present at this time.</p>
-<pre><code>Solr模块支持手动将查询定义为String，或者从方法名称派生查询。注意：目前没有QueryDSL支持。
-</code></pre><p>1.Declared queries  声明的查询</p>
-<p>Deriving the query from the method name is not always sufficient and/or may result in unreadable method names. In this case one might make either use of Solr named queries (see Using NamedQueries ) or use the @Query annotation (see Using @Query Annotation ).</p>
-<pre><code>从方法名称派生查询并不总是足够可行，可能导致不可读的方法名称。在这种情况下，可以使用Solr命名
-查询（请参阅使用NamedQueries）或使用@Query注释（请参阅使用@Query Annotation）。
-</code></pre><p>2 Query creation 创建查询</p>
-<p>Generally the query creation mechanism for Solr works as described in Query methods（链接） . Here’s a short example of what a Solr query method translates into:</p>
-<pre><code>通常，Solr的查询创建机制的工作方式如Query方法中所述。以下是Solr查询方法转换为的简短示例：
-</code></pre><p>Example 54. Query creation from method names 方法名查询</p>
-<pre><code>public interface ProductRepository extends Repository&lt;Product, String&gt; {
-  List&lt;Product&gt; findByNameAndPopularity(String name, Integer popularity);
-}
-</code></pre><p>The method name above will be translated into the following solr query</p>
-<pre><code>方法名将会被翻译为下面的查询语句
-
-q=name:?0 AND popularity:?1
-</code></pre><p>有很多查询方法可以自己查询 <a href="https://docs.spring.io/spring-data/solr/docs/3.0.9.RELEASE/reference/html/#solr.repositories" target="_blank" rel="noopener">spring data solr DOC</a></p>
-<p><strong>Using @Query Annotation  Query注解查询</strong></p>
-<p>Using named queries ( Using NamedQueries ) to declare queries for entities is a valid approach and works fine for a small number of queries. As the queries themselves are tied to the Java method that executes them, you actually can bind them directly using the Spring Data Solr @Query annotation.</p>
-<pre><code>使用命名查询(使用NamedQueries)来声明实体的查询是一种有效的方法，在少量查询中可以很好地
-工作。由于查询本身绑定到执行查询的Java方法，实际上可以使用Spring Data Solr @Query注释直接
-绑定查询。
-</code></pre><p>Example 55. Declare query at the method using the @Query annotation.</p>
-<pre><code>public interface ProductRepository extends SolrRepository&lt;Product, String&gt; {
-  @Query(&quot;inStock:?0&quot;)
-  List&lt;Product&gt; findByAvailable(Boolean available);
-}
-</code></pre><h3 id="Document-Mapping-文档映射"><a href="#Document-Mapping-文档映射" class="headerlink" title="Document Mapping  文档映射"></a>Document Mapping  文档映射</h3><p>Though there is already support for Entity Mapping within SolrJ, Spring Data Solr ships with its own mapping mechanism shown in the following section. NOTE: DocumentObjectBinder has superior performance. Therefore usage is recommended if there is not need for custom type mapping. You can switch to DocumentObjectBinder by registering SolrJConverter within SolrTemplate.</p>
-<pre><code>虽然SolrJ中已经支持实体映射，但是Spring Data Solr附带了它自己的映射机制，如下一节所示。
-注:DocumentObjectBinder有较好的性能。因此，如果不需要自定义类型映射，建议使用。通过在
-SolrTemplate中注册SolrJConverter，您可以切换到DocumentObjectBinder。
-</code></pre><p>今天先翻译到这里了，如果需要再继续翻译！！！</p>
+                <h1 id="2018跌倒了，2019站起来"><a href="#2018跌倒了，2019站起来" class="headerlink" title="2018跌倒了，2019站起来"></a>2018跌倒了，2019站起来</h1><h2 id="2018总结"><a href="#2018总结" class="headerlink" title="2018总结"></a>2018总结</h2><p>不知不觉2018就这样悄悄溜走了，时光荏苒，岁月如梭啊！你是否完成了你年初定的计划？反正我没有，哈哈O(∩_∩)O！当然也是很有收获哈。</p>
+<h3 id="1-´・ω・-说博客"><a href="#1-´・ω・-说博客" class="headerlink" title="1 (´・ω・`).说博客"></a>1 (´・ω・`).说博客</h3><p>2017年4月份踏入这个行业，今年是我做程序员的第二个年头，而博客也是今年下半年才开始经营起来，写了9篇文章，因为自己的专业技能和文笔的能力有限，目前还在充电中，所以文章更新的并不是很频繁，不然既是对自己的不负责，更是对读者的不负责。但是我并不会放弃写博客，因为我希望我可以养成写作的习惯，一方面写文章可以让我自己学到东西理解的更深刻，另一方面也可以提升自己的文笔以及表达能力。当程序员是一个可以随时享受成就感的事情，而写博客把这种成就感留住，并且分享给更多的人解决他们的问题，增加这种成就感，何乐而不为呢？</p>
+<h3 id="2-´・ω・-说技能"><a href="#2-´・ω・-说技能" class="headerlink" title="2 (´・ω・`)说技能"></a>2 (´・ω・`)说技能</h3><p>在这里要感谢上个公司让我跟着做了一个电商的项目，让我第一次接触到了微服务、分布式这些概念，这引起了我很大的兴趣（不知道原因），学习到很多关于分布式的专业知识，为了学习这些知识，我又认识了一堆有趣而且技术很厉害的人物，从他们身上，我学习到很多东西，当然更多的还是认识到自己的不足，这让我静下来反省自己。</p>
+<p>就好像建一栋楼，如果没有建立在深固的地基，那也只是一栋危楼而已，不能承受一点的负荷，更不用考虑在它的基础上建更高的楼。作为一个半路出家的程序员，要想成为一个专业的、好的程序员，写出优质的代码，扎实的基础是必不可少的，所以数据结构、算法、操作系统原理这些计算机专业基础知识都是我要学习和巩固的。</p>
+<h2 id="2019计划"><a href="#2019计划" class="headerlink" title="2019计划"></a>2019计划</h2><h3 id="1-´・ω・-还说博客"><a href="#1-´・ω・-还说博客" class="headerlink" title="1 (´・ω・`)还说博客"></a>1 (´・ω・`)还说博客</h3><p>2019年，博客要正式用起来，多做一些技术输出，一个大佬说既然要学习就要有输出，所以博客我要更新起来，尽量做到把学到的东西及自己的理解以博客的形式表达出来。再添加一些评论的功能，让看到我文章的胖友可以指出我写的不对的地方，做程序员是一个需要懂得分享的职业，这样的进步的更快，就像很多牛逼的项目都是开源的一样，人多力量大，集成大家的好的思维才可以写出好的项目。</p>
+<h3 id="2-´・ω・-再说技能"><a href="#2-´・ω・-再说技能" class="headerlink" title="2 (´・ω・`)再说技能"></a>2 (´・ω・`)再说技能</h3><p>2019年，我希望我可以把计算机基础知识都可以学一遍，把基础知识夯实。开始死磕一些优秀框架的源码，例如Dubbo、RocketMQ，学习他们优秀代码以及设计思维。当然希望在学习的过程中还可以认识更多有趣的灵魂。</p>
+<h2 id="书单计划"><a href="#书单计划" class="headerlink" title="书单计划"></a>书单计划</h2><ul>
+<li>1月份把Java编程思想剩下的几章读完</li>
+<li>1月份把操作系统原理剩下几章读完</li>
+<li>Java编程思想复读（可以有博客文章输出）</li>
+<li>数据结构和算法（Java版）</li>
+<li>HeadFrist 设计模式</li>
+<li>Redis实战</li>
+<li>MySQL技术内幕InnoDB存储引擎</li>
+<li>深入理解Java虚拟机</li>
+<li>Spring实战及Spring源码解析</li>
+<li>霍乱时期的爱情（偶尔看下文学作品陶冶下情操也是必不可少的O(∩_∩)O）</li>
+</ul>
+<p>额，感觉差不多了(´・ω・`)，慢慢来，一口吃不成胖子。</p>
+<p>2019年，胖友们大家一起加油啊！</p>
 
                 
 
@@ -374,13 +241,9 @@ SolrTemplate中注册SolrJConverter，您可以切换到DocumentObjectBinder。
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/2018/08/13/线程池理解/" data-toggle="tooltip" data-placement="top" title="线程池理解">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/2018/07/24/上一个电商项目的思考/" data-toggle="tooltip" data-placement="top" title="上一个电商项目的思考">Next Post &rarr;</a>
+                            <a href="/2018/09/26/Leetcode406/" data-toggle="tooltip" data-placement="top" title="Leetcode406">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -410,7 +273,7 @@ SolrTemplate中注册SolrJConverter，您可以切换到DocumentObjectBinder。
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#spring-data-solr-翻译"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">spring data solr(翻译)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Preface-前言"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Preface 前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Reference-Documentation-参考文档"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">Reference Documentation 参考文档</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Solr-Repositories-Introduction-solr存储库介绍"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">Solr Repositories Introduction solr存储库介绍</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Query-methods-查询方法"><span class="toc-nav-number">1.2.2.</span> <span class="toc-nav-text">Query methods 查询方法</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Document-Mapping-文档映射"><span class="toc-nav-number">1.2.3.</span> <span class="toc-nav-text">Document Mapping  文档映射</span></a></li></ol></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2018跌倒了，2019站起来"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">2018跌倒了，2019站起来</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2018总结"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">2018总结</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-´・ω・-说博客"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">1 (´・ω・`).说博客</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-´・ω・-说技能"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">2 (´・ω・`)说技能</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2019计划"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">2019计划</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-´・ω・-还说博客"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">1 (´・ω・`)还说博客</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-´・ω・-再说技能"><span class="toc-nav-number">1.2.2.</span> <span class="toc-nav-text">2 (´・ω・`)再说技能</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#书单计划"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">书单计划</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -430,7 +293,7 @@ SolrTemplate中注册SolrJConverter，您可以切换到DocumentObjectBinder。
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#spring data solr" title="spring data solr">spring data solr</a>
+                          <a class="tag" href="/tags/#2018" title="2018">2018</a>
                         
                     </div>
                 </section>
@@ -461,8 +324,8 @@ SolrTemplate中注册SolrJConverter，您可以切换到DocumentObjectBinder。
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "your-disqus-ID";
-    var disqus_identifier = "http://yoursite-url/2018/08/06/spring-data-solr/";
-    var disqus_url = "http://yoursite-url/2018/08/06/spring-data-solr/";
+    var disqus_identifier = "http://yoursite-url/2018/12/31/2018跌倒了，2019站起来/";
+    var disqus_url = "http://yoursite-url/2018/12/31/2018跌倒了，2019站起来/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
