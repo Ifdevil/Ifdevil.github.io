@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          Java源码分析-HashCode - NPZ技术博客
+          Java源码分析-HashCode&amp;TreeNode - NPZ技术博客
         
     </title>
 
-    <link rel="canonical" href="http://yoursite-url/2019/02/12/Java源码分析-HashCode/">
+    <link rel="canonical" href="http://yoursite-url/2019/02/15/Java源码分析-HashCode-TreeNode/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -69,7 +69,7 @@
 <style type="text/css">
     header.intro-header{
         
-            background-image: url('Demo.png')
+            background-image: url('Demo.jpg')
             /*post*/
         
     }
@@ -97,11 +97,11 @@
                               <a class="tag" href="/tags/#Java源码" title="Java源码">Java源码</a>
                             
                         </div>
-                        <h1>Java源码分析-HashCode</h1>
+                        <h1>Java源码分析-HashCode&amp;TreeNode</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by NPZ on
-                            2019-02-12
+                            2019-02-15
                         </span>
                     </div>
                 
@@ -218,79 +218,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h1><blockquote>
-<p>版本为JDK8</p>
-</blockquote>
-<h2 id="类继承关系"><a href="#类继承关系" class="headerlink" title="类继承关系"></a>类继承关系</h2><pre><code>public class HashMap&lt;K,V&gt; extends AbstractMap&lt;K,V&gt;
-    implements Map&lt;K,V&gt;, Cloneable, Serializable 
-</code></pre><h2 id="类字段"><a href="#类字段" class="headerlink" title="类字段"></a>类字段</h2><pre><code>// 序列号
-private static final long serialVersionUID = 362498820763181265L;    
-// 默认的初始容量是16
-static final int DEFAULT_INITIAL_CAPACITY = 1 &lt;&lt; 4;   
-// 最大容量
-static final int MAXIMUM_CAPACITY = 1 &lt;&lt; 30;
-// 默认的填充因子
-static final float DEFAULT_LOAD_FACTOR = 0.75f;
-// 当桶(bucket)上的结点数大于这个值时会转成红黑树
-static final int TREEIFY_THRESHOLD = 8; 
-// 当桶(bucket)上的结点数小于这个值时树转链表
-static final int UNTREEIFY_THRESHOLD = 6;
-// 桶中结构转化为红黑树对应的table的最小大小
-static final int MIN_TREEIFY_CAPACITY = 64;
-// 存储元素的数组，总是2的幂次倍
-transient Node&lt;k,v&gt;[] table; 
-// 存放具体元素的集
-transient Set&lt;map.entry&lt;k,v&gt;&gt; entrySet;
-// 存放元素的个数，注意这个不等于数组的长度。
-transient int size;
-// 每次扩容和更改map结构的计数器
-transient int modCount;   
-// 临界值 当实际大小(容量*填充因子)超过临界值时，会进行扩容
-int threshold;
-// 填充因子
-final float loadFactor;
-</code></pre><h2 id="内部类"><a href="#内部类" class="headerlink" title="内部类"></a>内部类</h2><h3 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h3><p>即Map中链式结构存储数据的单位</p>
-<pre><code>static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {
-    final int hash;
-    final K key;
-    V value;
-    Node&lt;K,V&gt; next;
-
-    Node(int hash, K key, V value, Node&lt;K,V&gt; next) {
-        this.hash = hash;
-        this.key = key;
-        this.value = value;
-        this.next = next;
-    }
-
-    public final K getKey()        { return key; }
-    public final V getValue()      { return value; }
-    public final String toString() { return key + &quot;=&quot; + value; }
-    //每个节点的hashcode是由key的hashcode和value的hashcode进行异或得到的
-    public final int hashCode() {
-        return Objects.hashCode(key) ^ Objects.hashCode(value);
-    }
-
-    public final V setValue(V newValue) {
-        V oldValue = value;
-        value = newValue;
-        return oldValue;
-    }
-
-    public final boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (o instanceof Map.Entry) {
-            //对比Object o 和此Node的key和value
-            Map.Entry&lt;?,?&gt; e = (Map.Entry&lt;?,?&gt;)o;
-            if (Objects.equals(key, e.getKey()) &amp;&amp;
-                Objects.equals(value, e.getValue()))
-                return true;
-        }
-        return false;
-    }
-}
-</code></pre><h3 id="TreeNode"><a href="#TreeNode" class="headerlink" title="TreeNode"></a>TreeNode</h3><p>即Map中红黑树结构存储数据的单位；其中包含的方法很多，不一一列举；由此代码可知道，TreeNode继承自LinkedHashMap内部类Entry&lt;K,V&gt;，而Entry&lt;K,V&gt;又继承自HashMap.Node&lt;K,V&gt;，具体的字段介绍请看下面注释</p>
+                <h1 id="HashMap-amp-TreeNode"><a href="#HashMap-amp-TreeNode" class="headerlink" title="HashMap&amp;TreeNode"></a>HashMap&amp;TreeNode</h1><h2 id="TreeNode"><a href="#TreeNode" class="headerlink" title="TreeNode"></a>TreeNode</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>即Map中红黑树结构存储数据的单位；其中包含的方法很多，不一一列举；由此代码可知道，TreeNode继承自LinkedHashMap内部类Entry&lt;K,V&gt;，而Entry&lt;K,V&gt;又继承自HashMap.Node&lt;K,V&gt;，具体的字段介绍请看下面注释</p>
 <pre><code>static final class TreeNode&lt;K,V&gt; extends LinkedHashMap.Entry&lt;K,V&gt; {
     TreeNode&lt;K,V&gt; parent;  // red-black tree links 父节点
     TreeNode&lt;K,V&gt; left;  //左子树
@@ -300,184 +228,14 @@ final float loadFactor;
     TreeNode(int hash, K key, V val, Node&lt;K,V&gt; next) {
         super(hash, key, val, next);
     }
-</code></pre><h2 id="常用方法分析"><a href="#常用方法分析" class="headerlink" title="常用方法分析"></a>常用方法分析</h2><p><strong>PUT方法</strong>：这个方法中设计两个其他方法，putVal(int hash, K key, V value, boolean onlyIfAbsent,boolean evict)、hash(Object key),我们一个个来看，首先看个短的hash(Object key)</p>
-<pre><code>public V put(K key, V value) {
-    return putVal(hash(key), key, value, false, true);
-}
-</code></pre><p><strong>hash(Object key)</strong>：求key的hash值得方法，这里首先调用Object的hashcode方法生成一个hash码，因为后面将会通过hash码计算该元素在table数组的下标，如下面的公式，n的大小为2的幂，不妨思考一下，在n - 1为15(0x1111)时，其实散列真正生效的只是低4bit的有效位，当然容易碰撞了，所以为了避免这种情况，就是把高16bit和低16bit异或了一下，将key的hashCode右移16位在与自身异或，尽量避免hash碰撞</p>
-<pre><code>//计算下标方法
-i = (n - 1) &amp; hash
-
-static final int hash(Object key) {
-    int h;
-    // 使用（hashCode的值）以及（hashCode的值无符号右移16位）做异或操作
-
-    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
-}
-</code></pre><p><strong>putVal(int hash, K key, V value, boolean onlyIfAbsent,boolean evict)</strong>：真正的put的方法</p>
-<pre><code>//增加键值对的方法
-/**
- * @param hash hash for key
- * @param key the key
- * @param value the value to put
- * @param onlyIfAbsent if true, don&apos;t change existing value 如果true，则不要更改现有值
- * @param evict if false, the table is in creation mode.如果为false，则表处于创建模式
- * @return previous value, or null if none
- */
-final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
-               boolean evict) {
-    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;
-    //1.把table赋值给tab,判断如果为null或者长度为0则进行扩容
-    if ((tab = table) == null || (n = tab.length) == 0)
-        n = (tab = resize()).length;
-    //2.计算index，并对null做处理
-    //(n - 1) &amp; hash 确定元素存放在哪个桶中，桶为空，新生成结点放入桶中(此时，这个结点是放在数组中)
-    if ((p = tab[i = (n - 1) &amp; hash]) == null)
-        tab[i] = newNode(hash, key, value, null);
-    else {
-        //如果对应的key不为null,创建一个临时Node e和K k
-        Node&lt;K,V&gt; e; K k;
-        //如果原来的Node的key和现在的key完全相同，key已经存在，则把Node赋值给e做记录
-        if (p.hash == hash &amp;&amp;
-            ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
-            e = p;
-        //如果key不相等
-        //1.如果该节点为红黑树节点
-        else if (p instanceof TreeNode)
-            //将该键值对存入红黑树
-            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);
-        //2.如果该节点时链表节点
-        else {
-            for (int binCount = 0; ; ++binCount) {
-                if ((e = p.next) == null) {// 如果为空，构造链表上的新节点
-                    p.next = newNode(hash, key, value, null);
-                    // 结点数量达到阈值，转化为红黑树
-                    if (binCount &gt;= TREEIFY_THRESHOLD - 1) // -1 for 1st
-                        treeifyBin(tab, hash);
-                    break;
-                }
-                //如果e此时所在的节点等于要填入的元素的key,则说明此key已经存在，退出循环，e做记录
-                if (e.hash == hash &amp;&amp;
-                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
-                    break;
-                //位置被占用，将p赋值为它的next节点，再次循环判断
-                p = e;
-            }
-        }
-        //如果e不为null,则把原来的值用新的值覆盖掉
-        if (e != null) { // existing mapping for key
-            V oldValue = e.value;
-            //可以覆盖
-            if (!onlyIfAbsent || oldValue == null)
-                e.value = value;
-            // 访问后回调
-            afterNodeAccess(e);
-            return oldValue;
-        }
-    }
-    //增加更新计数
-    ++modCount;
-    if (++size &gt; threshold)
-        resize();
-    // 插入后回调
-    afterNodeInsertion(evict);
-    return null;
-}
-</code></pre><p>以上就是Put方法的基本操作，其中涉及到几个重要的方法，有resize()扩容方法、putTreeVal(HashMap&lt;K,V&gt; map, Node&lt;K,V&gt;[] tab,int h, K k, V v)添加红黑树节点，treeifyBin(tab, hash)树化链表，而afterNodeAccess（Node&lt;K,V&gt;）、afterNodeInsertion(evict)在HashMap中是空方法，在LinkedHashMap中会使用到，所以我们只看前两个方法。</p>
-<p><strong>resize()</strong>：扩容方法，JDK8是用 head 和 tail 来保证链表的顺序和之前一样，这样就不会产生循环引用。</p>
-<pre><code>final Node&lt;K,V&gt;[] resize() {
-    Node&lt;K,V&gt;[] oldTab = table;
-    //原数组长度
-    int oldCap = (oldTab == null) ? 0 : oldTab.length;
-    //原容量
-    int oldThr = threshold;
-    int newCap, newThr = 0;
-    //如果原数组长度大于0
-    if (oldCap &gt; 0) {
-        //如果原数组长度已经大于或等于允许的最大的数组长度
-        if (oldCap &gt;= MAXIMUM_CAPACITY) {
-            //扩大容量，取最大值
-            threshold = Integer.MAX_VALUE;
-            //返回原数组
-            return oldTab;
-        }
-        //如果旧的数组长度扩大2倍小于允许最大长度并且旧的容量大于等于默认容量
-        else if ((newCap = oldCap &lt;&lt; 1) &lt; MAXIMUM_CAPACITY &amp;&amp;
-                 oldCap &gt;= DEFAULT_INITIAL_CAPACITY)
-            newThr = oldThr &lt;&lt; 1; // double threshold 容量扩大2倍
-    }
-    else if (oldThr &gt; 0) // initial capacity was placed in threshold
-        newCap = oldThr;  // 根据thresold初始化数组
-    else {               // zero initial threshold signifies using defaults
-        //如果原数组大小为0则初始化默认的数组大小和容量
-        newCap = DEFAULT_INITIAL_CAPACITY;
-        newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
-    }
-    if (newThr == 0) {//如果新的阈值是0，对应的是  当前表是空的，但是有阈值的情况
-        float ft = (float)newCap * loadFactor;
-        newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; (float)MAXIMUM_CAPACITY ?
-                  (int)ft : Integer.MAX_VALUE);
-    }
-    //更新阈值
-    threshold = newThr;
-    @SuppressWarnings({&quot;rawtypes&quot;,&quot;unchecked&quot;})
-        Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])new Node[newCap];
-    //更新数组
-    table = newTab;
-    if (oldTab != null) {
-        for (int j = 0; j &lt; oldCap; ++j) {
-            Node&lt;K,V&gt; e;
-            if ((e = oldTab[j]) != null) { // 扩容之后进行rehash操作
-                oldTab[j] = null;
-                if (e.next == null)
-                    //单节点，没有链接节点，重新分配Node，计算index
-                    newTab[e.hash &amp; (newCap - 1)] = e;
-                else if (e instanceof TreeNode)
-                    ((TreeNode&lt;K,V&gt;)e).split(this, newTab, j, oldCap);
-                else { // preserve order 保持秩序
-                    Node&lt;K,V&gt; loHead = null, loTail = null;
-                    Node&lt;K,V&gt; hiHead = null, hiTail = null;
-                    Node&lt;K,V&gt; next;
-                    do {
-                        next = e.next;//获取此节点的下个链接节点
-                        //该节点与oldCap最高位相同位置处是否为0
-                        // 解释：为什么这么判断呢？当resize时，cap扩充2倍，那么n-1的mask范围在高位多1bit
-                        // 例如oldCap 为16 二进制位10000，n-1 为01111
-                        // 扩充后为32，二进制位100000，n-1 为 011111
-                        // 当map中元素的hash值多出的1位为0，则索引没变
-                        // 是1的话索引变成“原索引+oldCap”
-                        // 1.索引没变
-                        if ((e.hash &amp; oldCap) == 0) {
-                            if (loTail == null)
-                                loHead = e;
-                            else
-                                loTail.next = e;
-                            loTail = e;
-                        }
-                        // 2.索引变化---&gt; 原索引+oldCap
-                        else {
-                            if (hiTail == null)
-                                hiHead = e;
-                            else
-                                hiTail.next = e;
-                            hiTail = e;
-                        }
-                    } while ((e = next) != null);
-                    if (loTail != null) {
-                        loTail.next = null;
-                        newTab[j] = loHead;
-                    }
-                    if (hiTail != null) {
-                        hiTail.next = null;
-                        newTab[j + oldCap] = hiHead;
-                    }
-                }
-            }
-        }
-    }
-    return newTab;
-}
-</code></pre><p><strong>putTreeVal(HashMap&lt;K,V&gt; map, Node&lt;K,V&gt;[] tab,int h, K k, V v)</strong>：红黑树添加节点</p>
+</code></pre><h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><ul>
+<li>每个节点要么是黑色，要么是红色。（节点非黑即红）</li>
+<li>根节点是黑色。</li>
+<li>每个叶子节点（NIL）是黑色。 </li>
+<li>如果一个节点是红色的，则它的子节点必须是黑色的。（也就是说父子节点不能同时为红色）</li>
+<li>从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点。（这一点是平衡的关键）</li>
+</ul>
+<h2 id="TreeNode方法分析"><a href="#TreeNode方法分析" class="headerlink" title="TreeNode方法分析"></a>TreeNode方法分析</h2><p><strong>putTreeVal(HashMap&lt;K,V&gt; map, Node&lt;K,V&gt;[] tab,int h, K k, V v)</strong>：红黑树添加节点</p>
 <pre><code> /**
  * Tree version of putVal.
  * HashMap:此hashmap对象
@@ -545,7 +303,132 @@ final TreeNode&lt;K,V&gt; putTreeVal(HashMap&lt;K,V&gt; map, Node&lt;K,V&gt;[] t
         }
     }
 }
-</code></pre><p><strong>treeifyBin(tab, hash)</strong>：</p>
+</code></pre><p><strong>balanceInsertion(TreeNode&lt;K,V&gt; root,TreeNode&lt;K,V&gt; x)</strong>：红黑树的插入平衡算法，当树结构中新插入了一个节点后，要对树进行重新的结构化，以保证该树始终维持红黑树的特性。</p>
+<pre><code>/**
+ * 重新平衡红黑树，返回头结点
+ * @param root：根节点
+ * @param x：新添加的节点
+ * @param &lt;K&gt;
+ * @param &lt;V&gt;
+ * @return
+ */
+static &lt;K,V&gt; TreeNode&lt;K,V&gt; balanceInsertion(TreeNode&lt;K,V&gt; root,
+                                            TreeNode&lt;K,V&gt; x) {
+    x.red = true;//初始x节点颜色为红色
+    for (TreeNode&lt;K,V&gt; xp, xpp, xppl, xppr;;) {
+        //查看有没有父节点，如果没有说明是头节点，头节点为黑色，返回头节点
+        if ((xp = x.parent) == null) {
+            x.red = false;
+            return x;
+        }
+        //如果x的父节点不是红色(即黑色)，或者x的祖父节点为null，
+        // 则不必旋转或改颜色，直接返回头节点
+        else if (!xp.red || (xpp = xp.parent) == null)
+            return root;
+        //走到这里说明x的父节点至少在第三层且父节点为红色，要重新平衡
+        //如果x的父节点是祖父节点的左子节点
+        if (xp == (xppl = xpp.left)) {
+            //如果父节点的兄弟节点不为null并且兄弟节点为红色
+            if ((xppr = xpp.right) != null &amp;&amp; xppr.red) {
+                xppr.red = false;//兄弟节点改为黑色
+                xp.red = false;//父节点也变为黑色
+                xpp.red = true;//祖父节点变为红色
+                x = xpp;//更新x为祖父节点，进入下次循环
+            }
+            //如果x父节点的兄弟节点为null或者为黑色
+            else {
+                //如果x是父节点的右子节点
+                if (x == xp.right) {
+                    root = rotateLeft(root, x = xp);//左旋
+                    xpp = (xp = x.parent) == null ? null : xp.parent;
+                }
+                //如果x是父节点的左子节点
+                if (xp != null) {
+                    xp.red = false;//修改x父节点颜色为黑色
+                    if (xpp != null) {
+                        xpp.red = true;//修改祖父节点颜色为红色
+                        root = rotateRight(root, xpp);//红黑树右旋，更新root值
+                    }
+                }
+            }
+        }
+        //如果x的父节点是祖父节点的右子节点，和左子节点类似，对称
+        else {
+            if (xppl != null &amp;&amp; xppl.red) {
+                xppl.red = false;
+                xp.red = false;
+                xpp.red = true;
+                x = xpp;
+            }
+            else {
+                if (x == xp.left) {
+                    root = rotateRight(root, x = xp);
+                    xpp = (xp = x.parent) == null ? null : xp.parent;
+                }
+                if (xp != null) {
+                    xp.red = false;
+                    if (xpp != null) {
+                        xpp.red = true;
+                        root = rotateLeft(root, xpp);
+                    }
+                }
+            }
+        }
+    }
+}
+</code></pre><p><strong>rotateRight(TreeNode&lt;K,V&gt; root,TreeNode&lt;K,V&gt; p)</strong>：红黑树右旋，左旋类似</p>
+<pre><code>static &lt;K,V&gt; TreeNode&lt;K,V&gt; rotateRight(TreeNode&lt;K,V&gt; root,
+                                           TreeNode&lt;K,V&gt; p) {
+        TreeNode&lt;K,V&gt; l, pp, lr;
+        //如果p节点不为null并且p的左节点也不为null
+        if (p != null &amp;&amp; (l = p.left) != null) {
+            //两件事：
+            // 1.将p.left节点更新为l.right
+            // 2.如果l.right不为null,更新其父节点为p
+            if ((lr = p.left = l.right) != null)
+                lr.parent = p;
+            //两件事：
+            //1.将l.parent更新为p.parent,
+            //2.如果p.parent为null,说明p是头节点，更新l为头节点，置为黑色
+            if ((pp = l.parent = p.parent) == null)
+                (root = l).red = false;
+            //p.parent即pp不为null,如果原p是pp的右节点，现在更新右节点为l
+            else if (pp.right == p)
+                pp.right = l;
+            //如果原p是pp的左节点，现在更新左节点为l
+            else
+                pp.left = l;
+            //右旋，所以更新l的右节点为p，p的父节点为l
+            l.right = p;
+            p.parent = l;
+        }
+        return root;
+    }
+</code></pre><p><strong>moveRootToFront(Node&lt;K,V&gt;[] tab, TreeNode&lt;K,V&gt; root)</strong>：把给定节点设为桶中的第一个元素</p>
+<pre><code>static &lt;K,V&gt; void moveRootToFront(Node&lt;K,V&gt;[] tab, TreeNode&lt;K,V&gt; root) {
+        int n;
+        //如果root不为null并且tab不为null并且tab数组的长度大于0
+        if (root != null &amp;&amp; tab != null &amp;&amp; (n = tab.length) &gt; 0) {
+            int index = (n - 1) &amp; root.hash;//根据root的hash值计算到下标值
+            TreeNode&lt;K,V&gt; first = (TreeNode&lt;K,V&gt;)tab[index];//获取数组下标index的第一个节点
+            if (root != first) {//如果当前first不等于root
+                Node&lt;K,V&gt; rn;
+                tab[index] = root;//替换桶首位
+                TreeNode&lt;K,V&gt; rp = root.prev;//获取root的前节点
+                //下面的代码为将root从以前的链表中抽取出来，并放置到链表头
+                if ((rn = root.next) != null)//如果root的下节点不为null
+                    ((TreeNode&lt;K,V&gt;)rn).prev = rp;
+                if (rp != null)
+                    rp.next = rn;
+                if (first != null)
+                    first.prev = root;
+                root.next = first;
+                root.prev = null;
+            }
+            assert checkInvariants(root);
+        }
+    }
+</code></pre><p><strong>treeifyBin(tab, hash)</strong>：树化链表结构</p>
 <pre><code>final void treeifyBin(Node&lt;K,V&gt;[] tab, int hash) {
     int n, index; Node&lt;K,V&gt; e;
     //数组长度没有达到MIN_TREEIFY_CAPACITY时，扩容解决链表节点过多的问题
@@ -568,6 +451,50 @@ final TreeNode&lt;K,V&gt; putTreeVal(HashMap&lt;K,V&gt; map, Node&lt;K,V&gt;[] t
             hd.treeify(tab);//树化节点
     }
 }
+</code></pre><p><strong>treeify(Node&lt;K,V&gt;[] tab)</strong>：树化链表</p>
+<pre><code>final void treeify(Node&lt;K,V&gt;[] tab) {
+        TreeNode&lt;K,V&gt; root = null;
+        //1.赋值x为this,即头节点，如果x不为null
+        for (TreeNode&lt;K,V&gt; x = this, next; x != null; x = next) {
+            next = (TreeNode&lt;K,V&gt;)x.next;// 获取x的下一个节点
+            x.left = x.right = null;// 设置当前节点的左右节点为空
+            if (root == null) {
+                x.parent = null;
+                x.red = false;
+                root = x; // 根节点指向到当前节点
+            }
+            else {
+                //如果root不为null,以下代码主要节点与节点的大小，然后构建红黑树
+                K k = x.key;//获取x的key
+                int h = x.hash;//获取x的hash
+                Class&lt;?&gt; kc = null;
+                for (TreeNode&lt;K,V&gt; p = root;;) {
+                    int dir, ph;
+                    K pk = p.key;
+                    if ((ph = p.hash) &gt; h)
+                        dir = -1;
+                    else if (ph &lt; h)
+                        dir = 1;
+                    else if ((kc == null &amp;&amp;
+                              (kc = comparableClassFor(k)) == null) ||
+                             (dir = compareComparables(kc, k, pk)) == 0)
+                        dir = tieBreakOrder(k, pk);
+
+                    TreeNode&lt;K,V&gt; xp = p;
+                    if ((p = (dir &lt;= 0) ? p.left : p.right) == null) {
+                        x.parent = xp;
+                        if (dir &lt;= 0)
+                            xp.left = x;
+                        else
+                            xp.right = x;
+                        root = balanceInsertion(root, x);
+                        break;
+                    }
+                }
+            }
+        }
+        moveRootToFront(tab, root);
+    }
 </code></pre>
                 
 
@@ -575,13 +502,9 @@ final TreeNode&lt;K,V&gt; putTreeVal(HashMap&lt;K,V&gt; map, Node&lt;K,V&gt;[] t
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/2019/02/15/Java源码分析-HashCode-TreeNode/" data-toggle="tooltip" data-placement="top" title="Java源码分析-HashCode&TreeNode">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/2018/12/31/2018跌倒了，2019站起来/" data-toggle="tooltip" data-placement="top" title="2018跌倒了，2019站起来">Next Post &rarr;</a>
+                            <a href="/2019/02/12/Java源码分析-HashCode/" data-toggle="tooltip" data-placement="top" title="Java源码分析-HashCode">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -611,7 +534,7 @@ final TreeNode&lt;K,V&gt; putTreeVal(HashMap&lt;K,V&gt; map, Node&lt;K,V&gt;[] t
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#HashMap"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">HashMap</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#类继承关系"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">类继承关系</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#类字段"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">类字段</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#内部类"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">内部类</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Node"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">Node</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#TreeNode"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">TreeNode</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#常用方法分析"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">常用方法分析</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#HashMap-amp-TreeNode"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">HashMap&amp;TreeNode</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#TreeNode"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">TreeNode</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#概念"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">概念</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#特性"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">特性</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#TreeNode方法分析"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">TreeNode方法分析</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -666,8 +589,8 @@ final TreeNode&lt;K,V&gt; putTreeVal(HashMap&lt;K,V&gt; map, Node&lt;K,V&gt;[] t
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "your-disqus-ID";
-    var disqus_identifier = "http://yoursite-url/2019/02/12/Java源码分析-HashCode/";
-    var disqus_url = "http://yoursite-url/2019/02/12/Java源码分析-HashCode/";
+    var disqus_identifier = "http://yoursite-url/2019/02/15/Java源码分析-HashCode-TreeNode/";
+    var disqus_url = "http://yoursite-url/2019/02/15/Java源码分析-HashCode-TreeNode/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

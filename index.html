@@ -136,14 +136,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -210,6 +210,39 @@
             
                 <!-- Main Content -->
 
+
+<div class="post-preview">
+
+    <a href="/2019/02/15/Java源码分析-HashCode-TreeNode/">
+        <h2 class="post-title">
+            Java源码分析-HashCode&TreeNode
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            HashMap&amp;TreeNodeTreeNode概念即Map中红黑树结构存储数据的单位；其中包含的方法很多，不一一列举；由此代码可知道，TreeNode继承自LinkedHashMap内部类Entry&lt;K,V&gt;，而Entry&lt;K,V&gt;又继承自HashMap.Node&lt;K,V&gt;，具体的字段介绍请看下面注释
+static final class Tre......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by NPZ on
+            2019-02-15
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Map" title="Map">Map</a>
+            
+              <a href="/tags/#HashMap" title="HashMap">HashMap</a>
+            
+              <a href="/tags/#Java源码" title="Java源码">Java源码</a>
+            
+        </div>
+    
+
+</div>
+<hr>
 
 <div class="post-preview">
 
@@ -500,37 +533,6 @@ Preface 前言The Spring Data for Apache Solr project applies core Spring concep
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2018/07/20/Java中的volatile/">
-        <h2 class="post-title">
-            Java中的volatile
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Java中的volatile内存可见性volatile是Java提供的一种轻量级的同步机制，在并发编程中，它也扮演着比较重要的角色。同synchronized相比（synchronized通常称为重量级锁），volatile更轻量级。
-public class TestVolatile {
-    boolean status = false;
-
-    /**
-     * 状态切换为tr......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by NPZ on
-            2018-07-20
-        </p>
-        <div class="tags">
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -569,9 +571,15 @@ public class TestVolatile {
             
         
             
-        
+            <a href="/tags/#Map" title="Map" rel="2">Map</a>
             
         
+            
+            <a href="/tags/#HashMap" title="HashMap" rel="2">HashMap</a>
+            
+        
+            
+            <a href="/tags/#Java源码" title="Java源码" rel="2">Java源码</a>
             
         
             
@@ -640,6 +648,10 @@ public class TestVolatile {
     <ul>
       
         <li>
+          <a href="/2019/02/15/Java源码分析-HashCode-TreeNode/">Java源码分析-HashCode&amp;TreeNode</a>
+        </li>
+      
+        <li>
           <a href="/2019/02/12/Java源码分析-HashCode/">Java源码分析-HashCode</a>
         </li>
       
@@ -653,10 +665,6 @@ public class TestVolatile {
       
         <li>
           <a href="/2018/09/11/记某互联网公司面试经历-一/">记某互联网公司面试经历(一)</a>
-        </li>
-      
-        <li>
-          <a href="/2018/08/26/Java提供了哪些IO方式？-NIO如何实现多路复用/">Java提供了哪些IO方式？ NIO如何实现多路复用?</a>
         </li>
       
     </ul>
