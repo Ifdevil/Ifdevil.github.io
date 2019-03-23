@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Dubbo系列(一)-SPI - NPZ技术博客
+        
+    </title>
+
+    <link rel="canonical" href="http://yoursite-url/2019/03/23/Dubbo系列-一-SPI/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('Demo.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Dubbo系列" title="Dubbo系列">Dubbo系列</a>
+                            
+                              <a class="tag" href="/tags/#Dubbo源码" title="Dubbo源码">Dubbo源码</a>
+                            
+                        </div>
+                        <h1>Dubbo系列(一)-SPI</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by NPZ on
+                            2019-03-23
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">NPZ技术博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>声明：该文章摘抄于Dubbo官方文档，有兴趣者可以直接查看官方文档，本文只是帮助写者加深记忆而写的。</p>
+</blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>SPI全称为Service Provider Interface，是一种服务发现机制。SPI的本质就是将接口实现类的全限定名配置在文件中，并由服务加载器读取配置文件，加载实现类。这样可以在运行时，动态为接口替换实现类。正因此特性，我们可以很容易的通过 SPI 机制为我们的程序提供拓展功能。不过，Dubbo 并未使用 Java 原生的 SPI 机制，而是对其进行了增强，使其能够更好的满足需求。</p>
+<p>接下来，我们先来了解一下 Java SPI 与 Dubbo SPI 的用法，然后再来分析 Dubbo SPI 的源码。</p>
+<p>具体介绍可以查看<a href="http://dubbo.apache.org/zh-cn/docs/source_code_guide/dubbo-spi.html" target="_blank" rel="noopener">Dubbo官方文档</a></p>
+<h2 id="SPI-示例"><a href="#SPI-示例" class="headerlink" title="SPI 示例"></a>SPI 示例</h2><h3 id="Java-SPI-示例"><a href="#Java-SPI-示例" class="headerlink" title="Java SPI 示例"></a>Java SPI 示例</h3><p>首先，我们定义一个接口，名称为 Robot。</p>
+<pre><code>public interface Robot {
+    void sayHello();
+}
+</code></pre><p>接下来定义两个实现类，分别为 OptimusPrime 和 Bumblebee。</p>
+<pre><code>public class OptimusPrime implements Robot {
+
+    @Override
+    public void sayHello() {
+        System.out.println(&quot;Hello, I am Optimus Prime.&quot;);
+    }
+}
+
+public class Bumblebee implements Robot {
+
+    @Override
+    public void sayHello() {
+        System.out.println(&quot;Hello, I am Bumblebee.&quot;);
+    }
+}
+</code></pre><p>接下来 META-INF/services 文件夹下创建一个文件，名称为 Robot 的全限定名 org.apache.spi.Robot。文件内容为实现类的全限定的类名，如下：</p>
+<pre><code>org.apache.spi.OptimusPrime
+org.apache.spi.Bumblebee
+</code></pre><p>接下来编写代码进行测试。</p>
+<pre><code>public class JavaSPITest {
+
+    @Test
+    public void sayHello() throws Exception {
+        ServiceLoader&lt;Robot&gt; serviceLoader = ServiceLoader.load(Robot.class);
+        System.out.println(&quot;Java SPI&quot;);
+        serviceLoader.forEach(Robot::sayHello);
+    }
+}
+</code></pre><p>输出结果为：</p>
+<pre><code>Java SPI
+Hello, I am Optimus Prime.
+Hello, I am Bumblebee.
+</code></pre><p>从测试结果可以看出，我们的两个实现类被成功的加载，并输出了相应的内容。这就是Java SPI的演示。</p>
+<h3 id="Dubbo-SPI-示例"><a href="#Dubbo-SPI-示例" class="headerlink" title="Dubbo SPI 示例"></a>Dubbo SPI 示例</h3><p>Dubbo 并未使用 Java SPI，而是重新实现了一套功能更强的 SPI 机制。Dubbo SPI 的相关逻辑被封装在了 ExtensionLoader 类中，通过 ExtensionLoader，我们可以加载指定的实现类。Dubbo SPI 所需的配置文件需放置在 META-INF/dubbo 路径下，配置内容如下。</p>
+<pre><code>optimusPrime = org.apache.spi.OptimusPrime
+bumblebee = org.apache.spi.Bumblebee
+</code></pre><p>与 Java SPI 实现类配置不同，Dubbo SPI 是通过键值对的方式进行配置，这样我们可以按需加载指定的实现类。另外，在测试 Dubbo SPI 时，需要在 Robot 接口上标注 @SPI 注解。下面来演示 Dubbo SPI 的用法：</p>
+<pre><code>public class DubboSPITest {
+
+    @Test
+    public void sayHello() throws Exception {
+        ExtensionLoader&lt;Robot&gt; extensionLoader = 
+            ExtensionLoader.getExtensionLoader(Robot.class);
+        Robot optimusPrime = extensionLoader.getExtension(&quot;optimusPrime&quot;);
+        optimusPrime.sayHello();
+        Robot bumblebee = extensionLoader.getExtension(&quot;bumblebee&quot;);
+        bumblebee.sayHello();
+    }
+}
+</code></pre><h2 id="Dubbo-SPI-源码分析"><a href="#Dubbo-SPI-源码分析" class="headerlink" title="Dubbo SPI 源码分析"></a>Dubbo SPI 源码分析</h2><p>上一章简单演示了 Dubbo SPI 的使用方法。我们首先通过 ExtensionLoader 的 getExtensionLoader 方法获取一个 ExtensionLoader 实例，然后再通过 ExtensionLoader 的 getExtension 方法获取拓展类对象。这其中，getExtensionLoader 方法用于从缓存中获取与拓展类对应的 ExtensionLoader，若缓存未命中，则创建一个新的实例。先看getExtensionLoader方法，官方文档没有给出这部分的源码，我们自己来看一下,还是很简单的。</p>
+<pre><code>public static &lt;T&gt; ExtensionLoader&lt;T&gt; getExtensionLoader(Class&lt;T&gt; type) {
+    //校验参数是否为空
+    if (type == null) {
+        throw new IllegalArgumentException(&quot;Extension type == null&quot;);
+    }
+    //校验参数是否是接口
+    if (!type.isInterface()) {
+        throw new IllegalArgumentException(&quot;Extension type(&quot; + type + &quot;) is not interface!&quot;);
+    }
+    ////校验参数是否带有注解SPI
+    if (!withExtensionAnnotation(type)) {
+        throw new IllegalArgumentException(&quot;Extension type(&quot; + type +
+                &quot;) is not extension, because WITHOUT @&quot; + SPI.class.getSimpleName() + &quot; Annotation!&quot;);
+    }
+    //从本地缓存中获取该类型的ExtensionLoader
+    ExtensionLoader&lt;T&gt; loader = (ExtensionLoader&lt;T&gt;) EXTENSION_LOADERS.get(type);
+    //如果为null，则新建一个
+    if (loader == null) {
+        EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader&lt;T&gt;(type));
+        loader = (ExtensionLoader&lt;T&gt;) EXTENSION_LOADERS.get(type);
+    }
+    //返回ExtensionLoader
+    return loader;
+}
+</code></pre><p>下面我们从 ExtensionLoader 的 getExtension 方法作为入口，对拓展类对象的获取过程进行详细的分析。</p>
+<pre><code>public T getExtension(String name) {
+    if (name == null || name.length() == 0)
+        throw new IllegalArgumentException(&quot;Extension name == null&quot;);
+    if (&quot;true&quot;.equals(name)) {
+        // 获取默认的拓展实现类
+        return getDefaultExtension();
+    }
+    // Holder，顾名思义，用于持有目标对象
+    Holder&lt;Object&gt; holder = cachedInstances.get(name);
+    if (holder == null) {
+        cachedInstances.putIfAbsent(name, new Holder&lt;Object&gt;());
+        holder = cachedInstances.get(name);
+    }
+    Object instance = holder.get();
+    // 双重检查
+    if (instance == null) {
+        synchronized (holder) {
+            instance = holder.get();
+            if (instance == null) {
+                // 创建拓展实例
+                instance = createExtension(name);
+                // 设置实例到 holder 中
+                holder.set(instance);
+            }
+        }
+    }
+    return (T) instance;
+}
+</code></pre><p>上面代码的逻辑比较简单，首先检查缓存，缓存未命中则创建拓展对象。下面我们来看一下创建拓展对象的过程是怎样的。</p>
+<pre><code>private T createExtension(String name) {
+    // 从配置文件中加载所有的拓展类，可得到“配置项名称”到“配置类”的映射关系表
+    Class&lt;?&gt; clazz = getExtensionClasses().get(name);
+    if (clazz == null) {
+        throw findException(name);
+    }
+    try {
+        T instance = (T) EXTENSION_INSTANCES.get(clazz);
+        if (instance == null) {
+            // 通过反射创建实例
+            EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
+            instance = (T) EXTENSION_INSTANCES.get(clazz);
+        }
+        // 向实例中注入依赖
+        injectExtension(instance);
+        Set&lt;Class&lt;?&gt;&gt; wrapperClasses = cachedWrapperClasses;
+        if (wrapperClasses != null &amp;&amp; !wrapperClasses.isEmpty()) {
+            // 循环创建 Wrapper 实例
+            for (Class&lt;?&gt; wrapperClass : wrapperClasses) {
+                // 将当前 instance 作为参数传给 Wrapper 的构造方法，并通过反射创建 Wrapper 实例。
+                // 然后向 Wrapper 实例中注入依赖，最后将 Wrapper 实例再次赋值给 instance 变量
+                instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
+            }
+        }
+        return instance;
+    } catch (Throwable t) {
+        throw new IllegalStateException(&quot;Extension instance(name: &quot; + name + &quot;, class: &quot; +
+                type + &quot;)  could not be instantiated: &quot; + t.getMessage(), t);
+    }
+}
+</code></pre><p>createExtension 方法的逻辑稍复杂一下，包含了如下的步骤：</p>
+<ol>
+<li>通过 getExtensionClasses 获取所有的拓展类</li>
+<li>通过反射创建拓展对象</li>
+<li>向拓展对象中注入依赖</li>
+<li>将拓展对象包裹在相应的 Wrapper 对象中</li>
+</ol>
+<p>以上步骤中，第一个步骤是加载拓展类的关键，第三和第四个步骤是 Dubbo IOC 与 AOP 的具体实现。在接下来的章节中，将会重点分析 getExtensionClasses 方法的逻辑，以及简单介绍 Dubbo IOC 的具体实现。</p>
+<h3 id="获取所有的拓展类"><a href="#获取所有的拓展类" class="headerlink" title="获取所有的拓展类"></a>获取所有的拓展类</h3><p>我们在通过名称获取拓展类之前，首先需要根据配置文件解析出拓展项名称到拓展类的映射关系表（Map&lt;名称, 拓展类&gt;），之后再根据拓展项名称从映射关系表中取出相应的拓展类即可。相关过程的代码分析如下：</p>
+<pre><code>private Map&lt;String, Class&lt;?&gt;&gt; getExtensionClasses() {
+    // 从缓存中获取已加载的拓展类
+    Map&lt;String, Class&lt;?&gt;&gt; classes = cachedClasses.get();
+    // 双重检查
+    if (classes == null) {
+        synchronized (cachedClasses) {
+            classes = cachedClasses.get();
+            if (classes == null) {
+                // 加载拓展类
+                classes = loadExtensionClasses();
+                cachedClasses.set(classes);
+            }
+        }
+    }
+    return classes;
+}
+</code></pre><p>这里也是先检查缓存，若缓存未命中，则通过 synchronized 加锁。加锁后再次检查缓存，并判空。此时如果 classes 仍为 null，则通过 loadExtensionClasses 加载拓展类。下面分析 loadExtensionClasses 方法的逻辑。</p>
+<pre><code>private Map&lt;String, Class&lt;?&gt;&gt; loadExtensionClasses() {
+    // 获取 SPI 注解，这里的 type 变量是在调用 getExtensionLoader 方法时传入的
+    final SPI defaultAnnotation = type.getAnnotation(SPI.class);
+    if (defaultAnnotation != null) {
+        String value = defaultAnnotation.value();
+        if ((value = value.trim()).length() &gt; 0) {
+            // 对 SPI 注解内容进行切分
+            String[] names = NAME_SEPARATOR.split(value);
+            // 检测 SPI 注解内容是否合法，不合法则抛出异常
+            if (names.length &gt; 1) {
+                throw new IllegalStateException(&quot;more than 1 default extension name on extension...&quot;);
+            }
+
+            // 设置默认名称，参考 getDefaultExtension 方法
+            if (names.length == 1) {
+                cachedDefaultName = names[0];
+            }
+        }
+    }
+
+    Map&lt;String, Class&lt;?&gt;&gt; extensionClasses = new HashMap&lt;String, Class&lt;?&gt;&gt;();
+    // 加载指定文件夹下的配置文件
+    loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY);
+    loadDirectory(extensionClasses, DUBBO_DIRECTORY);
+    loadDirectory(extensionClasses, SERVICES_DIRECTORY);
+    return extensionClasses;
+}
+</code></pre><p>loadExtensionClasses 方法总共做了两件事情，一是对 SPI 注解进行解析，二是调用 loadDirectory 方法加载指定文件夹配置文件。SPI 注解解析过程比较简单，无需多说。下面我们来看一下 loadDirectory 做了哪些事情。</p>
+<pre><code>private void loadDirectory(Map&lt;String, Class&lt;?&gt;&gt; extensionClasses, String dir) {
+    // fileName = 文件夹路径 + type 全限定名 
+    String fileName = dir + type.getName();
+    try {
+        Enumeration&lt;java.net.URL&gt; urls;
+        ClassLoader classLoader = findClassLoader();
+        // 根据文件名加载所有的同名文件
+        if (classLoader != null) {
+            urls = classLoader.getResources(fileName);
+        } else {
+            urls = ClassLoader.getSystemResources(fileName);
+        }
+        if (urls != null) {
+            while (urls.hasMoreElements()) {
+                java.net.URL resourceURL = urls.nextElement();
+                // 加载资源
+                loadResource(extensionClasses, classLoader, resourceURL);
+            }
+        }
+    } catch (Throwable t) {
+        logger.error(&quot;...&quot;);
+    }
+}
+</code></pre><p>loadDirectory 方法先通过 classLoader 获取所有资源链接，然后再通过 loadResource 方法加载资源。我们继续跟下去，看一下 loadResource 方法的实现。</p>
+<pre><code>private void loadResource(Map&lt;String, Class&lt;?&gt;&gt; extensionClasses, 
+    ClassLoader classLoader, java.net.URL resourceURL) {
+    try {
+        BufferedReader reader = new BufferedReader(
+            new InputStreamReader(resourceURL.openStream(), &quot;utf-8&quot;));
+        try {
+            String line;
+            // 按行读取配置内容
+            while ((line = reader.readLine()) != null) {
+                // 定位 # 字符
+                final int ci = line.indexOf(&apos;#&apos;);
+                if (ci &gt;= 0) {
+                    // 截取 # 之前的字符串，# 之后的内容为注释，需要忽略
+                    line = line.substring(0, ci);
+                }
+                line = line.trim();
+                if (line.length() &gt; 0) {
+                    try {
+                        String name = null;
+                        int i = line.indexOf(&apos;=&apos;);
+                        if (i &gt; 0) {
+                            // 以等于号 = 为界，截取键与值
+                            name = line.substring(0, i).trim();
+                            line = line.substring(i + 1).trim();
+                        }
+                        if (line.length() &gt; 0) {
+                            // 加载类，并通过 loadClass 方法对类进行缓存
+                            loadClass(extensionClasses, resourceURL, 
+                                      Class.forName(line, true, classLoader), name);
+                        }
+                    } catch (Throwable t) {
+                        IllegalStateException e = new IllegalStateException(&quot;Failed to load extension class...&quot;);
+                    }
+                }
+            }
+        } finally {
+            reader.close();
+        }
+    } catch (Throwable t) {
+        logger.error(&quot;Exception when load extension class...&quot;);
+    }
+}
+</code></pre><p>loadResource 方法用于读取和解析配置文件，并通过反射加载类，最后调用 loadClass 方法进行其他操作。loadClass 方法用于主要用于操作缓存，该方法的逻辑如下：</p>
+<pre><code>private void loadClass(Map&lt;String, Class&lt;?&gt;&gt; extensionClasses, java.net.URL resourceURL, 
+    Class&lt;?&gt; clazz, String name) throws NoSuchMethodException {
+
+    if (!type.isAssignableFrom(clazz)) {
+        throw new IllegalStateException(&quot;...&quot;);
+    }
+
+    // 检测目标类上是否有 Adaptive 注解
+    if (clazz.isAnnotationPresent(Adaptive.class)) {
+        if (cachedAdaptiveClass == null) {
+            // 设置 cachedAdaptiveClass缓存
+            cachedAdaptiveClass = clazz;
+        } else if (!cachedAdaptiveClass.equals(clazz)) {
+            throw new IllegalStateException(&quot;...&quot;);
+        }
+
+    // 检测 clazz 是否是 Wrapper 类型
+    } else if (isWrapperClass(clazz)) {
+        Set&lt;Class&lt;?&gt;&gt; wrappers = cachedWrapperClasses;
+        if (wrappers == null) {
+            cachedWrapperClasses = new ConcurrentHashSet&lt;Class&lt;?&gt;&gt;();
+            wrappers = cachedWrapperClasses;
+        }
+        // 存储 clazz 到 cachedWrapperClasses 缓存中
+        wrappers.add(clazz);
+
+    // 程序进入此分支，表明 clazz 是一个普通的拓展类
+    } else {
+        // 检测 clazz 是否有默认的构造方法，如果没有，则抛出异常
+        clazz.getConstructor();
+        if (name == null || name.length() == 0) {
+            // 如果 name 为空，则尝试从 Extension 注解中获取 name，或使用小写的类名作为 name
+            name = findAnnotationName(clazz);
+            if (name.length() == 0) {
+                throw new IllegalStateException(&quot;...&quot;);
+            }
+        }
+        // 切分 name
+        String[] names = NAME_SEPARATOR.split(name);
+        if (names != null &amp;&amp; names.length &gt; 0) {
+            Activate activate = clazz.getAnnotation(Activate.class);
+            if (activate != null) {
+                // 如果类上有 Activate 注解，则使用 names 数组的第一个元素作为键，
+                // 存储 name 到 Activate 注解对象的映射关系
+                cachedActivates.put(names[0], activate);
+            }
+            for (String n : names) {
+                if (!cachedNames.containsKey(clazz)) {
+                    // 存储 Class 到名称的映射关系
+                    cachedNames.put(clazz, n);
+                }
+                Class&lt;?&gt; c = extensionClasses.get(n);
+                if (c == null) {
+                    // 存储名称到 Class 的映射关系
+                    extensionClasses.put(n, clazz);
+                } else if (c != clazz) {
+                    throw new IllegalStateException(&quot;...&quot;);
+                }
+            }
+        }
+    }
+}
+</code></pre><p>如上，loadClass 方法操作了不同的缓存，比如 cachedAdaptiveClass、cachedWrapperClasses 和 cachedNames 等等。除此之外，该方法没有其他什么逻辑了。</p>
+<p>接下来，我们来聊聊 Dubbo IOC 方面的内容。</p>
+<h3 id="Dubbo-IOC"><a href="#Dubbo-IOC" class="headerlink" title="Dubbo IOC"></a>Dubbo IOC</h3><p>Dubbo IOC 是通过 setter 方法注入依赖。Dubbo 首先会通过反射获取到实例的所有方法，然后再遍历方法列表，检测方法名是否具有 setter 方法特征。若有，则通过 ObjectFactory 获取依赖对象，最后通过反射调用 setter 方法将依赖设置到目标对象中。整个过程对应的代码如下：</p>
+<pre><code>private T injectExtension(T instance) {
+    try {
+        if (objectFactory != null) {
+            // 遍历目标类的所有方法
+            for (Method method : instance.getClass().getMethods()) {
+                // 检测方法是否以 set 开头，且方法仅有一个参数，且方法访问级别为 public
+                if (method.getName().startsWith(&quot;set&quot;)
+                    &amp;&amp; method.getParameterTypes().length == 1
+                    &amp;&amp; Modifier.isPublic(method.getModifiers())) {
+                    // 获取 setter 方法参数类型
+                    Class&lt;?&gt; pt = method.getParameterTypes()[0];
+                    try {
+                        // 获取属性名，比如 setName 方法对应属性名 name
+                        String property = method.getName().length() &gt; 3 ? 
+                            method.getName().substring(3, 4).toLowerCase() + 
+                                method.getName().substring(4) : &quot;&quot;;
+                        // 从 ObjectFactory 中获取依赖对象
+                        Object object = objectFactory.getExtension(pt, property);
+                        if (object != null) {
+                            // 通过反射调用 setter 方法设置依赖
+                            method.invoke(instance, object);
+                        }
+                    } catch (Exception e) {
+                        logger.error(&quot;fail to inject via method...&quot;);
+                    }
+                }
+            }
+        }
+    } catch (Exception e) {
+        logger.error(e.getMessage(), e);
+    }
+    return instance;
+}
+</code></pre><p>在上面代码中，objectFactory 变量的类型为 AdaptiveExtensionFactory，AdaptiveExtensionFactory 内部维护了一个 ExtensionFactory 列表，用于存储其他类型的 ExtensionFactory。Dubbo 目前提供了两种 ExtensionFactory，分别是 SpiExtensionFactory 和 SpringExtensionFactory。前者用于创建自适应的拓展，后者是用于从 Spring 的 IOC 容器中获取所需的拓展。</p>
+<p>Dubbo IOC 目前仅支持 setter 方式注入，总的来说，逻辑比较简单易懂。</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/02/15/Java源码分析-HashCode-TreeNode/" data-toggle="tooltip" data-placement="top" title="Java源码分析-HashCode&TreeNode">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#简介"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">简介</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#SPI-示例"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">SPI 示例</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Java-SPI-示例"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Java SPI 示例</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Dubbo-SPI-示例"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Dubbo SPI 示例</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Dubbo-SPI-源码分析"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Dubbo SPI 源码分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#获取所有的拓展类"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">获取所有的拓展类</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Dubbo-IOC"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Dubbo IOC</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Dubbo系列" title="Dubbo系列">Dubbo系列</a>
+                        
+                          <a class="tag" href="/tags/#Dubbo源码" title="Dubbo源码">Dubbo源码</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://facebesidewyj.github.io/" target="_blank">LaoWang</a></li>
+                    
+                        <li><a href="http://kid-297.github.io/" target="_blank">LaoLi</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "your-disqus-ID";
+    var disqus_identifier = "http://yoursite-url/2019/03/23/Dubbo系列-一-SPI/";
+    var disqus_url = "http://yoursite-url/2019/03/23/Dubbo系列-一-SPI/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/Ifdevil">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; NPZ 2019 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://yoursite-url/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="http://yoursite-url/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
