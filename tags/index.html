@@ -18,15 +18,15 @@
 <link rel="shortcut icon" href="/images/favicon.png">
 
 
-<title>Hexo - </title>
+<title>标签 - Hexo</title>
 
 <meta name="keywords" content="">
 
 <meta name="description " content="">
 
 <!-- Jetpack Open Graph Tags -->
-<meta property="og:type" content="blog" />
-<meta property="og:title" content="Hexo - " />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="标签 - Hexo" />
 <meta property="og:description" content="" />
 <meta property="og:url" content="http://localhost:4000" />
 <meta property="og:site_name" content="Hexo" />
@@ -109,18 +109,8 @@
 
             <div class="page-title">
     <ul>
-        <li class="active">
-            <a href="/" data-name="最近">最近</a>
-        </li>
-        
-        <li class="">
-            <a href="/categories/tech" data-name="技术">技术</a>
-        </li>
-        
-        <li class="">
-            <a href="/categories/book" data-name="读书">读书</a>
-        </li>
-        
+        <li><a href="/" data-name="首页" title="Back Home">首页</a></li>
+        <li><a href="/archives" data-name="归档" title="归档">归档</a></li>
         <li class="page-search">
     <form id="search" class="search-form">
         <input type="text"
@@ -134,39 +124,27 @@
     </ul>
 </div>
 <div class="main-inner">
-    <!-- default get newest -->
-    
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <h3 class="post-title">总的来说，本站目前涉及1个领域 😄️</h3>
+        </div>
+        <h4 class="widget-title">标签云</h4>
         
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://ifdevil.github.io/" target="_blank">
-                <strong>Ifdevil</strong>
-            </a>
-            <em>·</em>2023-12-30
+        <div class="post-content markdown-body" itemprop="articleBody">
+            
+            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+            <div class="widget-wrap">
+                <div id="myCanvasContainer" class="widget tagcloud">
+                <canvas width="300" height="300" id="resCanvas">
+                    <a href="/tags/hexo/" style="font-size: 10px;">hexo</a>
+                </canvas>
+                </div>
+            </div>
             
         </div>
-        <a class="post-title" href="/2023/12/30/hello-world/" target="_blank" title="Hello World">Hello World</a>
-        <div class="post-meta">
-            <a href="/tags" target="_blank"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="http://localhost:4000/tags/hexo/" target="_blank">hexo</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        Hello World
-    </div>
-</article>
-
-
-
-    
+    </article>
 </div>
-
-
         </div><!-- end #main-->
     </div><!-- end #body -->
     <footer class="footer">
